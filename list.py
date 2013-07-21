@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
+
+# Consultant format:
+# {9001 : ('Kristine', 'Breiland Dalby', ....)}
+
+
 IN_FILE = "TEST58"
 
 
-def generate_lists(twfile):
+def parse_consultants(twfile):
     file = open(twfile,'rb').read()
     file = file.replace('\",\"',';').replace('\",','').replace(',\"', ';').replace(',',';').replace('\"',';')
     file = file.split('\n')
@@ -19,10 +24,17 @@ def generate_lists(twfile):
         for i in range(len(j)):
             j[i] = fix_whitespace(j[i])
             j[i] = clean_names(j[i])
+        
+        # Ugly, need to change when we have a more stable input list
         j[5] = j[5].lower()
         if 'club' in j[1].lower() or 'startbag' in j[1].lower():
             del list[list.index(j)]
-    return list
+
+    dict = {}
+    for i in list:
+        dict[i[0]] = (i[1],i[2],i[3],i[4],i[5],i[7],i[8])
+
+    return dict
 
 
 def clean_names(string):
@@ -68,12 +80,12 @@ def fix_whitespace(string):
         string += i
     return string
 
-def get_active_consultants(lists):
-    active = []
-    for i in lists:
-        if len(i[0]) == 4:
-            active.append(i)
-    del active[-1]
+def get_active_consultants(dic):
+    active = {}
+    for key, value in dic.iteritems():
+        if len(key) == 4:
+            active[key] = value
+    #del active[-1]
     return active
 
 def generate_vcard(**kwargs):
@@ -107,6 +119,17 @@ def generate_vcard(**kwargs):
     return card
 
 
+def sort_teams(dic):
+    teams = {}
+    for key, value in dic.iteritems():
+        team = key[:2]
+        if team not in teams:
+            teams[team] = {}
+            teams[team][key] = value
+        else:
+            teams[team][key] = value
+    return teams
+
 #c=0
 #for i in list:
 #    print c
@@ -118,16 +141,20 @@ def generate_vcard(**kwargs):
 
 def main():
     
-    list = get_active_consultants(generate_lists(IN_FILE))
-    
-    for cons in list:
-        f = open('vcard/%s_%s_%s.vcf' % (cons[0], cons[1], cons[2]), 'wb')
-        vcard = generate_vcard(firstname=cons[1], lastname=cons[2], 
-        title="TW konsulent " + cons[0], phone=cons[3], 
-        mobile=cons[4], 
-        address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5]) 
-        f.write(vcard)
-
+    active_consultants = get_active_consultants(parse_consultants(IN_FILE))
+    sorted = sort_teams(active_consultants)
+    for key, value in sorted.iteritems():
+        print key
+        if key == "28":
+            print value
+#    
+#    for cons in active_consultants:
+#        f = open('vcard/%s_%s_%s.vcf' % (cons[0], cons[1], cons[2]), 'wb')
+#        vcard = generate_vcard(firstname=cons[1], lastname=cons[2], 
+#        title="TW konsulent " + cons[0], phone=cons[3], 
+#        mobile=cons[4], 
+#        address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5]) 
+#        f.write(vcard)
 
 main()
 
