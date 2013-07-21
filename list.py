@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+IN_FILE = "TEST58"
+
+
 def generate_lists(twfile):
     file = open(twfile,'rb').read()
     file = file.replace('\",\"',';').replace('\",','').replace(',\"', ';').replace(',',';').replace('\"',';')
@@ -17,7 +20,7 @@ def generate_lists(twfile):
             j[i] = fix_whitespace(j[i])
             j[i] = clean_names(j[i])
         j[5] = j[5].lower()
-        if 'club' in j[1].lower():
+        if 'club' in j[1].lower() or 'startbag' in j[1].lower():
             del list[list.index(j)]
     return list
 
@@ -58,7 +61,7 @@ def fix_whitespace(string):
         if list[-1] == " ":
             del list[-1]
     except IndexError:
-        none = None
+        pass
 
     string = ""
     for i in list:
@@ -115,7 +118,7 @@ def generate_vcard(**kwargs):
 
 def main():
     
-    list = get_active_consultants(generate_lists('TEST58'))
+    list = get_active_consultants(generate_lists(IN_FILE))
     
     for cons in list:
         f = open('vcard/%s_%s_%s.vcf' % (cons[0], cons[1], cons[2]), 'wb')
