@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 #Server settings
-HOSTNAME = "lame.no"
-USERNAME = "meepo"
+HOSTNAME = "<removed>"
+USERNAME = "<removed>"
 REMOTEBACKUPDIR = "/storage/backup/klatrerosen/"
 
 DATE = datetime.now()
