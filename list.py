@@ -6,7 +6,7 @@
 
 
 IN_FILE = "TEST58"
-
+VCARD_DIR = "vcard"
 
 def parse_consultants(twfile):
     file = open(twfile,'rb').read()
@@ -130,31 +130,23 @@ def sort_teams(dic):
             teams[team][key] = value
     return teams
 
-#c=0
-#for i in list:
-#    print c
-#    print(i)
-#    c += 1
-
-#generate_vcard(firstname=cons[1], lastname=cons[2], title="TW konsulent " + cons[0], phone=cons[3], mobile=cons[4], address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5])
+def save_vcards(dic):
+    for key, value in dic.iteritems():
+        f = open('vcard/%s_%s_%s.vcf' % (key, value[0], value[1]), 'wb')
+        vcard = generate_vcard(firstname=cons[1], lastname=cons[2], 
+                               title="TW konsulent " + cons[0], phone=cons[3],
+                               address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5]) 
+        f.write(vcard)
+        
 
 
 def main():
     
     active_consultants = get_active_consultants(parse_consultants(IN_FILE))
-    sorted = sort_teams(active_consultants)
-    for key, value in sorted.iteritems():
-        print key
-        if key == "28":
-            print value
-#    
-#    for cons in active_consultants:
-#        f = open('vcard/%s_%s_%s.vcf' % (cons[0], cons[1], cons[2]), 'wb')
-#        vcard = generate_vcard(firstname=cons[1], lastname=cons[2], 
-#        title="TW konsulent " + cons[0], phone=cons[3], 
-#        mobile=cons[4], 
-#        address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5]) 
-#        f.write(vcard)
+    sorted_consultants = sort_teams(active_consultants)
+    save_vcards(active_consultants)
+    
+
 
 main()
 
