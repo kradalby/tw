@@ -32,7 +32,7 @@ def parse_consultants(twfile):
 
     dict = {}
     for i in list:
-        dict[i[0]] = (i[1],i[2],i[3],i[4],i[5],i[7],i[8])
+        dict[i[0]] = (i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8])
 
     return dict
 
@@ -48,7 +48,6 @@ def clean_names(string):
                 if i != '':
                     string += i[0].upper() + i[1:] + ' '
         else:
-            print string
             string = string[0].upper() + string[1:]
         return string
     else:
@@ -115,7 +114,6 @@ def generate_vcard(**kwargs):
     card = ""
     for i in vcard:
         card += i + "\n"
-    print card    
     return card
 
 
@@ -133,9 +131,9 @@ def sort_teams(dic):
 def save_vcards(dic):
     for key, value in dic.iteritems():
         f = open('vcard/%s_%s_%s.vcf' % (key, value[0], value[1]), 'wb')
-        vcard = generate_vcard(firstname=cons[1], lastname=cons[2], 
-                               title="TW konsulent " + cons[0], phone=cons[3],
-                               address=cons[6] + ";" + cons[7] + ";" + cons[8], email=cons[5]) 
+        vcard = generate_vcard(firstname=value[0], lastname=value[1], 
+                               title="TW konsulent " + key, phone=value[2],
+                               address=value[5] + ";" + value[6] + ";" + value[7], email=value[4]) 
         f.write(vcard)
         
 
