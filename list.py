@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 
 
 # Consultant format:
@@ -7,6 +8,7 @@
 
 IN_FILE = "TEST58"
 VCARD_DIR = "vcard"
+MAIL_DIR = "mail"
 
 def parse_consultants(twfile):
     file = open(twfile,'rb').read()
@@ -135,14 +137,37 @@ def save_vcards(dic):
                                title="TW konsulent " + key, phone=value[2],
                                address=value[5] + ";" + value[6] + ";" + value[7], email=value[4]) 
         f.write(vcard)
-        
+
+def save_mailinglist(sorted_dic):
+    cons = open(MAIL_DIR+"/cons",'wb')
+    tl = open(MAIL_DIR+"/tl", 'wb')
+    for team in sorted_dic:
+        f = open(MAIL_DIR+"/"+team,'wb')
+        for key, value in sorted_dic[team].iteritems():
+            f.write(value[4]+'\n')
+            cons.write(value[4]+'\n')
+            if key[2:] == "01":
+                tl.write(value[4] + '\n')
+        f.close()
+    tl.close()
+    cons.close()
 
 
 def main():
+     
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", help="Tupperware tsv file with consultants")
+    parser.add_argument("option", help="mailinglist or vcard")
+    args = parser.parse_args()
     
-    active_consultants = get_active_consultants(parse_consultants(IN_FILE))
+    
+    active_consultants = get_active_consultants(parse_consultants(args.file))
     sorted_consultants = sort_teams(active_consultants)
-    save_vcards(active_consultants)
+    
+    if args.option.lower() == "vcard":
+        save_vcards(active_consultants)
+    elif args.option.lower() == "mailinglist":
+        save_mailinglist(sorted_consultants)
     
 
 
