@@ -24,17 +24,19 @@ def parse_consultants(twfile):
     
     for j in list:
         for i in range(len(j)):
+            j[i] = j[i].decode(encoding='ibm775',errors='strict')       
+            j[i] = j[i].encode(encoding='utf-8', errors='strict')
             j[i] = fix_whitespace(j[i])
             j[i] = clean_names(j[i])
-        
+
         # Ugly, need to change when we have a more stable input list
         j[5] = j[5].lower()
-        if 'club' in j[1].lower() or 'startbag' in j[1].lower():
-            del list[list.index(j)]
+#        if 'club' in j[1].lower() or 'startbag' in j[1].lower():
+#            del list[list.index(j)]
 
     dict = {}
     for i in list:
-        dict[i[0]] = (i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8])
+        dict[i[0]] = (i[1],i[2],i[3],i[4],i[5],i[6],i[7],i[8],i[9])
 
     return dict
 
@@ -84,7 +86,7 @@ def fix_whitespace(string):
 def get_active_consultants(dic):
     active = {}
     for key, value in dic.iteritems():
-        if len(key) == 4:
+        if value[8] != 'O' and len(key) == 4:
             active[key] = value
     #del active[-1]
     return active
@@ -160,10 +162,9 @@ def main():
     parser.add_argument("option", help="mailinglist or vcard")
     args = parser.parse_args()
     
-    
     active_consultants = get_active_consultants(parse_consultants(args.file))
     sorted_consultants = sort_teams(active_consultants)
-    
+
     if args.option.lower() == "vcard":
         save_vcards(active_consultants)
     elif args.option.lower() == "mailinglist":
