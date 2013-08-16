@@ -139,6 +139,7 @@ def save_vcards(dic):
                                title="TW konsulent " + key, phone=value[2],
                                address=value[5] + ";" + value[6] + ";" + value[7], email=value[4]) 
         f.write(vcard)
+        f.close()
 
 def save_mailinglist(sorted_dic):
     cons = open(MAIL_DIR+"/cons",'wb')
@@ -154,12 +155,23 @@ def save_mailinglist(sorted_dic):
     tl.close()
     cons.close()
 
+def create_mail_file(dic):
+    f = open('epost_list.sh', 'wb')
+    list = ""
+    teams = ""
+    for key, value in dic.iteritems():
+        teams += key + " "
+	list += "epost[" + key + "]=" + value[key + "01"][4] + '\n'
+    f.write("#!/bin/bash\n")
+    f.write("teams=\'" + teams + "\'\n")
+    f.write(list)
+    f.close()
 
 def main():
      
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", help="Tupperware tsv file with consultants")
-    parser.add_argument("option", help="mailinglist or vcard")
+    parser.add_argument("option", help="mailinglist or vcard or tllist")
     args = parser.parse_args()
     
     active_consultants = get_active_consultants(parse_consultants(args.file))
@@ -169,6 +181,8 @@ def main():
         save_vcards(active_consultants)
     elif args.option.lower() == "mailinglist":
         save_mailinglist(sorted_consultants)
+    elif args.option.lower() == "tllist":
+        create_mail_file(sorted_consultants)
     
 
 
