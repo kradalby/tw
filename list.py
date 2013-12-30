@@ -157,14 +157,20 @@ def save_mailinglist(sorted_dic):
 
 def create_mail_file(dic):
     f = open('epost_list.sh', 'wb')
+    fahk = open('teams.ahk','wb')
     list = ""
     teams = ""
     for key, value in dic.iteritems():
-        teams += key + " "
-	list += "epost[" + key + "]=" + value[key + "01"][4] + '\n'
+        try:
+            list += "epost[" + key + "]=" + value[key + "01"][4] + '\n'
+            teams += key + " "
+        except:
+            pass
     f.write("#!/bin/bash\n")
     f.write("teams=\'" + teams + "\'\n")
     f.write(list)
+    fahk.write('Teams = ' + teams.replace(' ',',')[:-1])
+    fahk.close()
     f.close()
 
 def main():
